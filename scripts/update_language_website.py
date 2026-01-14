@@ -189,7 +189,7 @@ def main():
     """Main function with command line argument parsing"""
     parser = argparse.ArgumentParser(description='Update language-specific website pages')
     parser.add_argument('--language', '-l', 
-                       choices=['en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT', 'nl_NL', 'en_GB_LON', 'en_GB_LIV'], 
+                       choices=['en_GB', 'fr_FR', 'de_DE', 'es_ES', 'it_IT', 'nl_NL', 'pl_PL', 'en_GB_LON', 'en_GB_LIV'], 
                        default='en_GB',
                        help='Language to update (default: en_GB)')
     
