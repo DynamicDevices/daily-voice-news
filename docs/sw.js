@@ -3,8 +3,8 @@
  * Provides offline functionality and caching for accessibility
  */
 
-const CACHE_NAME = 'news-digest-v2';
-const STATIC_CACHE = 'news-digest-static-v2';
+const CACHE_NAME = 'news-digest-v3';
+const STATIC_CACHE = 'news-digest-static-v3';
 
 // Files to cache for offline use
 const STATIC_FILES = [
