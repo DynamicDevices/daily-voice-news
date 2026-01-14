@@ -116,6 +116,8 @@ def update_language_page(language='en_GB'):
                   f"Notiziario audio quotidiano generato dall'IA per {today_formatted} presentato da Dynamic Devices. Voce italiana professionale, ottimizzato per lettori di schermo."),
         'nl_NL': (f"AudioNews Nederland - Dagelijks Audio Nieuwsoverzicht - {today_formatted}",
                   f"Dagelijks AI-gegenereerd audio nieuwsoverzicht voor {today_formatted} aangeboden door Dynamic Devices. Professionele Nederlandse stem, geoptimaliseerd voor schermlezers."),
+        'pl_PL': (f"AudioNews Polska - Codzienny Przegląd Wiadomości Audio - {today_formatted}",
+                  f"Codzienny przegląd wiadomości audio generowany przez AI dla {today_formatted} prezentowany przez Dynamic Devices. Profesjonalny polski głos, zoptymalizowany dla czytników ekranu."),
         'en_GB_LON': (f"AudioNews London - Daily Voice News Digest - {today_formatted}",
                       f"Daily AI-generated audio news digest for {today_formatted} brought to you by Dynamic Devices. Professional London voice, screen reader optimized."),
         'en_GB_LIV': (f"AudioNews Liverpool - Daily Voice News Digest - {today_formatted}",
