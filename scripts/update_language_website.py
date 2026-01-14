@@ -11,6 +11,41 @@ import argparse
 from datetime import date
 from pathlib import Path
 
+def format_date_localized(date_obj, language):
+    """Format date with localized month names"""
+    # Month names by language
+    month_names = {
+        'en_GB': ['January', 'February', 'March', 'April', 'May', 'June',
+                  'July', 'August', 'September', 'October', 'November', 'December'],
+        'fr_FR': ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+        'de_DE': ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                  'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+        'es_ES': ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+        'it_IT': ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+                  'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+        'nl_NL': ['januari', 'februari', 'maart', 'april', 'mei', 'juni',
+                  'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
+        'pl_PL': ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
+                  'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia']
+    }
+    
+    # Get month name for the language (default to English)
+    months = month_names.get(language, month_names.get(language[:5], month_names['en_GB']))
+    month_name = months[date_obj.month - 1]
+    
+    # Format based on language conventions
+    if language == 'pl_PL':
+        # Polish: "14 stycznia 2026"
+        return f"{date_obj.day} {month_name} {date_obj.year}"
+    elif language in ['de_DE', 'fr_FR', 'es_ES', 'it_IT', 'nl_NL']:
+        # European format: "14 janvier 2026"
+        return f"{date_obj.day} {month_name} {date_obj.year}"
+    else:
+        # English format: "January 14, 2026"
+        return f"{month_name} {date_obj.day}, {date_obj.year}"
+
 def update_language_page(language='en_GB'):
     """Update the language-specific page with new content"""
     
@@ -45,6 +80,11 @@ def update_language_page(language='en_GB'):
             'page_path': 'docs/nl_NL/index.html',
             'audio_dir': 'docs/nl_NL/audio',
             'text_dir': 'docs/nl_NL'
+        },
+        'pl_PL': {
+            'page_path': 'docs/pl_PL/index.html',
+            'audio_dir': 'docs/pl_PL/audio',
+            'text_dir': 'docs/pl_PL'
         },
         'en_GB_LON': {
             'page_path': 'docs/en_GB_LON/index.html',
@@ -99,8 +139,8 @@ def update_language_page(language='en_GB'):
     duration_seconds = int((audio_size_mb - duration_minutes) * 60)
     duration_formatted = f"{duration_minutes}min {duration_seconds}sec"
     
-    # Update title with today's date
-    today_formatted = date.today().strftime("%B %d, %Y")
+    # Update title with today's date (localized)
+    today_formatted = format_date_localized(date.today(), language)
     
     # Language-specific titles and descriptions
     lang_titles = {
