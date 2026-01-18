@@ -14,8 +14,9 @@ Controls all AI-related prompts and model settings.
   - `system_instruction`: Wrapper instruction emphasizing duplicate elimination
   - `region_names`: Language-specific region names (e.g., "UK", "French", "German")
 - `synthesis_prompts`: Language-specific prompts for generating audio content
-  - Each language has a `template` field with placeholders for `{theme}` and `{headlines}`
-  - Each language has a `max_words` field (currently 80 for all languages)
+  - Each language has a `template` field with placeholders for `{theme}`, `{headlines}`, and `{previous_context}`
+  - `{previous_context}` enables context-aware generation to avoid repetition across themes
+  - Each language has a `max_words` field (80 for most languages, 100 for BellaNews)
 - `ai_model`: Claude model configuration
   - `name`: Model identifier (e.g., "claude-sonnet-4-5-20250929")
   - `analysis_max_tokens`: Max tokens for story analysis (1500)
@@ -24,7 +25,11 @@ Controls all AI-related prompts and model settings.
   - `synthesis_temperature`: Temperature for synthesis (0.4 for creativity)
 
 **Supported Languages:**
-- `en_GB`: English (UK)
+- `en_GB`: English (UK) - **Active**
+- `pl_PL`: Polish (Poland) - **Active**
+- `bella`: BellaNews (Personalized business/finance) - **Active**
+
+**Disabled Languages (cost optimization):**
 - `en_GB_LON`: English (London)
 - `en_GB_LIV`: English (Liverpool)
 - `fr_FR`: French (France)
