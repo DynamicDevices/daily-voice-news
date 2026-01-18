@@ -407,6 +407,9 @@ jobs:
             fi
           done
           total_size_human=$(numfmt --to=iec $TOTAL_SIZE)
+          # Pull latest changes before committing to handle concurrent workflow runs
+          git pull --rebase origin main || echo "⚠️ Pull failed, continuing with commit"
+          
           git commit -m "🤖 Daily AI news digest & website update $(date +%Y-%m-%d)
 
           📊 Generated: $(date '+%Y-%m-%d %H:%M UTC')
@@ -415,7 +418,13 @@ jobs:
           🌐 Website: Updated with accessible newspaper layout
           ♿ Accessibility: Optimized for visually impaired users"
           
-          git push
+          # Push with retry logic for concurrent runs
+          if ! git push; then
+            echo "⚠️ Initial push failed, pulling and retrying..."
+            git pull --rebase origin main
+            git push || echo "⚠️ Push failed after retry - another workflow may have already pushed"
+          fi
+          
           echo "✅ Files committed and pushed successfully"
         fi
     
