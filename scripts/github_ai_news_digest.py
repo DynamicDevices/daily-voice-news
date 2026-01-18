@@ -635,7 +635,7 @@ class GitHubAINewsDigest:
         
         return themes
     
-    def get_synthesis_prompt(self, theme: str, stories: List[NewsStory]) -> str:
+    def get_synthesis_prompt(self, theme: str, stories: List[NewsStory], previous_content: str = "") -> str:
         """Generate language-specific synthesis prompt from config"""
         headlines = chr(10).join([f"- {story.title}" for story in stories[:3]])
         
@@ -645,8 +645,17 @@ class GitHubAINewsDigest:
             AI_PROMPTS_CONFIG['synthesis_prompts']['en_GB']
         )
         
-        # Format the template with theme and headlines
-        return prompt_config['template'].format(theme=theme, headlines=headlines)
+        # Add previous context if available
+        context_text = ""
+        if previous_content:
+            context_text = f"PREVIOUSLY COVERED CONTENT (DO NOT REPEAT):\n{previous_content}\n\n"
+        
+        # Format the template with theme, headlines, and previous context
+        return prompt_config['template'].format(
+            theme=theme, 
+            headlines=headlines,
+            previous_context=context_text
+        )
     
     def get_system_message(self) -> str:
         """Generate language-specific system message for AI"""
@@ -655,7 +664,7 @@ class GitHubAINewsDigest:
             AI_PROMPTS_CONFIG['system_messages']['en_GB']
         )
 
-    async def ai_synthesize_content(self, theme: str, stories: List[NewsStory]) -> str:
+    async def ai_synthesize_content(self, theme: str, stories: List[NewsStory], previous_content: str = "") -> str:
         """
         Use GitHub AI to create intelligent, coherent content synthesis
         """
@@ -676,7 +685,7 @@ class GitHubAINewsDigest:
             
             sources = list(set(story.source for story in stories))
             
-            ai_prompt = self.get_synthesis_prompt(theme, stories)
+            ai_prompt = self.get_synthesis_prompt(theme, stories, previous_content)
             
             # Use Anthropic Claude for content synthesis with config settings
             ai_model_config = AI_PROMPTS_CONFIG['ai_model']
@@ -729,11 +738,14 @@ class GitHubAINewsDigest:
             digest = f"{greeting}. Here's your {region_name} news digest for {today}, brought to you by Dynamic Devices. "
         
         # Add AI-synthesized content for each theme
+        previous_content = ""  # Track what we've already covered
         for theme, stories in themes.items():
             if stories:
-                theme_content = await self.ai_synthesize_content(theme, stories)
+                theme_content = await self.ai_synthesize_content(theme, stories, previous_content)
                 if theme_content:
                     digest += f" {theme_content}"
+                    # Add this content to previous_content for next iteration
+                    previous_content += f"\n[{theme}]: {theme_content}"
         
         # Language-specific closing
         if self.language == 'fr_FR':
