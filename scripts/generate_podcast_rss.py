@@ -127,7 +127,23 @@ def read_transcript(transcript_path: str) -> Dict[str, str]:
         parts = content.split('========================================')
         main_content = parts[-1].strip() if len(parts) > 1 else content.strip()
         
-        # Get first 200 chars for description
+        # Remove repetitive opening greetings/introductions
+        # Patterns to remove (case-insensitive):
+        opening_patterns = [
+            r'^Good morning[^.]*\.\s*Here\'?s your[^.]*news digest[^.]*brought to you by Dynamic Devices\.?\s*',
+            r'^Good morning[^.]*\.\s*Here\'?s your[^.]*brought to you by Dynamic Devices\.?\s*',
+            r'^Dzień dobry[^.]*\.\s*Oto Twój przegląd wiadomości[^.]*przygotowany przez Dynamic Devices\.?\s*',
+            r'^Good morning Bella[^.]*\.\s*Heres your[^.]*brought to you by Dynamic Devices\.?\s*',
+        ]
+        
+        for pattern in opening_patterns:
+            main_content = re.sub(pattern, '', main_content, flags=re.IGNORECASE | re.MULTILINE)
+        
+        # Clean up any leading whitespace or "In X news..." patterns that might remain
+        main_content = re.sub(r'^\s*In\s+\w+\s+news[^.]*\.?\s*', '', main_content, flags=re.IGNORECASE | re.MULTILINE)
+        main_content = main_content.strip()
+        
+        # Get first 200 chars for description (after removing opening)
         description = main_content[:200].replace('\n', ' ').strip()
         if len(main_content) > 200:
             description += '...'
