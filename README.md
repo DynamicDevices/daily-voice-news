@@ -70,6 +70,9 @@ audio-transcription/
 # Install dependencies
 pip install -r requirements.txt
 
+# Setup git hooks (optional but recommended)
+./scripts/setup-git-hooks.sh
+
 # Generate digest for English, Polish, or BellaNews
 python scripts/github_ai_news_digest.py --language en_GB
 python scripts/github_ai_news_digest.py --language pl_PL
@@ -94,6 +97,34 @@ AI prompts and voice settings are externalized to JSON files for easy updates:
 - **`config/voice_config.json`**: Voice configurations, TTS settings, retry logic
 
 See [`config/README.md`](config/README.md) for detailed documentation.
+
+## 🔍 Code Quality & Linting
+
+### Pre-commit Hook
+
+The project includes a git pre-commit hook that automatically checks code quality before commits:
+
+- ✅ **Python syntax checking**: Validates Python files for syntax errors
+- ✅ **JSON validation**: Ensures JSON configuration files are valid
+- ⚠️ **Code quality warnings**: Warns about trailing whitespace and tabs
+
+**Setup:**
+```bash
+./scripts/setup-git-hooks.sh
+```
+
+The hook runs automatically on every commit. If errors are found, the commit is blocked until they're fixed.
+
+**What it checks:**
+- Python syntax errors (using `py_compile`)
+- JSON file validity
+- Trailing whitespace (warning only)
+- Tab characters (warning only)
+
+**Bypassing (not recommended):**
+```bash
+git commit --no-verify  # Skip pre-commit checks
+```
 
 ## 🍴 Forking & Customization
 
