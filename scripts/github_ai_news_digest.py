@@ -746,7 +746,13 @@ class GitHubAINewsDigest:
                     # Strip leading/trailing whitespace and ensure single space separation
                     theme_content = theme_content.strip()
                     if theme_content:
-                        digest += f" {theme_content}"
+                        # Ensure digest ends with proper punctuation and spacing
+                        # Remove any trailing whitespace from digest, then add single space
+                        digest = digest.rstrip()
+                        # Ensure there's exactly one space before adding new content
+                        if digest and not digest.endswith(' '):
+                            digest += " "
+                        digest += theme_content
                         # Add this content to previous_content for next iteration
                         previous_content += f"\n[{theme}]: {theme_content}"
         
@@ -775,6 +781,11 @@ class GitHubAINewsDigest:
             digest += " This digest provides a synthesis of today's most significant news stories. "
             digest += "All content is original analysis designed for accessibility. "
             digest += "For complete coverage, visit news websites directly."
+        
+        # Final normalization: replace any multiple spaces with single spaces
+        # This ensures smooth audio flow without unnatural pauses
+        import re
+        digest = re.sub(r' +', ' ', digest)
         
         return digest
     
