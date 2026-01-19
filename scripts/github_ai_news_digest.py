@@ -942,7 +942,12 @@ class GitHubAINewsDigest:
                     socket.getaddrinfo = getaddrinfo_ipv4_only
                 
                 try:
-                    communicate = edge_tts.Communicate(digest_text, self.voice_name)
+                    # Get TTS rate/speed setting (default to +10% for faster speech)
+                    rate = tts_settings.get('rate', '+10%')
+                    
+                    # Edge TTS rate format: "+10%" (faster) or "-10%" (slower)
+                    # Valid range: -50% to +100%
+                    communicate = edge_tts.Communicate(digest_text, self.voice_name, rate=rate)
                     with open(output_filename, "wb") as file:
                         async for chunk in communicate.stream():
                             if chunk["type"] == "audio":

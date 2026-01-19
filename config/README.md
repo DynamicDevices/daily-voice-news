@@ -55,6 +55,10 @@ Controls voice settings and TTS configuration.
     - `retry_backoff_multiplier`: Backoff multiplier for exponential delay (1.5)
     - `force_ipv4`: Force IPv4 connections for GitHub Actions compatibility (true)
     - `ssl_verify`: SSL certificate verification (true)
+    - `rate`: Speech rate adjustment (default: "+10%")
+      - Valid range: "-50%" to "+100%"
+      - Examples: "+10%" (10% faster), "+20%" (20% faster), "0%" (normal), "-10%" (10% slower)
+      - Recommended: "+10%" to "+15%" for optimal speech rate (120-150 WPM)
   - `fallback`:
     - `enabled`: Whether fallback is enabled (false)
     - `provider`: Fallback provider if Edge TTS fails ("google_tts")
