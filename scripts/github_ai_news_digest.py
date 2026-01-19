@@ -854,6 +854,40 @@ class GitHubAINewsDigest:
         # Remove quote marks (they cause TTS pauses)
         digest = re.sub(r'["\']', '', digest)
         
+        # CRITICAL: Break up overly long sentences (especially for BellaNews)
+        # TTS engines pause at sentence boundaries, so long sentences cause slow speech rate
+        if self.language == 'bella':
+            # Split sentences that are too long (over 40 words)
+            sentences = re.split(r'([.!?]+\s+)', digest)
+            new_sentences = []
+            for sentence in sentences:
+                if sentence.strip() and len(sentence.strip()) > 2:
+                    words = sentence.split()
+                    # If sentence is over 40 words, try to break it at natural points
+                    if len(words) > 40:
+                        # Try to break at semicolons, then commas, then conjunctions
+                        parts = re.split(r'([;,])\s+', sentence)
+                        current_part = ""
+                        for part in parts:
+                            if part in [';', ',']:
+                                current_part += part + " "
+                            else:
+                                test_part = current_part + part
+                                test_words = test_part.split()
+                                if len(test_words) > 30:
+                                    if current_part.strip():
+                                        new_sentences.append(current_part.strip() + ".")
+                                    current_part = part + " "
+                                else:
+                                    current_part = test_part + " "
+                        if current_part.strip():
+                            new_sentences.append(current_part.strip() + ".")
+                    else:
+                        new_sentences.append(sentence)
+                else:
+                    new_sentences.append(sentence)
+            digest = " ".join(new_sentences)
+        
         # Replace any multiple spaces with single spaces (including after punctuation)
         digest = re.sub(r' +', ' ', digest)
         # Clean up any double commas that might result
