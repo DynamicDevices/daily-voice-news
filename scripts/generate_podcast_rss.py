@@ -200,6 +200,11 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
     ET.SubElement(channel, 'itunes:explicit').text = config['explicit']
     ET.SubElement(channel, 'itunes:type').text = 'episodic'
     
+    # iTunes owner (required by Apple Podcasts)
+    itunes_owner = ET.SubElement(channel, 'itunes:owner')
+    ET.SubElement(itunes_owner, 'itunes:name').text = config['author']
+    ET.SubElement(itunes_owner, 'itunes:email').text = config['email']
+    
     # iTunes category
     itunes_category = ET.SubElement(channel, 'itunes:category')
     itunes_category.set('text', config['category'])
@@ -224,7 +229,8 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
     ET.SubElement(channel, 'generator').text = 'AudioNews Podcast Generator'
     
     # Add episodes
-    for audio_file in audio_files:
+    total_episodes = len(audio_files)
+    for i, audio_file in enumerate(audio_files):
         episode_date = get_episode_date_from_filename(audio_file.name)
         if not episode_date:
             continue
@@ -273,6 +279,18 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
         ET.SubElement(item, 'itunes:title').text = title
         ET.SubElement(item, 'itunes:summary').text = description
         ET.SubElement(item, 'itunes:explicit').text = config['explicit']
+        ET.SubElement(item, 'itunes:episodeType').text = 'full'  # full, bonus, or trailer
+        
+        # Episode number (reverse order: newest = highest number)
+        episode_number = total_episodes - i
+        ET.SubElement(item, 'itunes:episode').text = str(episode_number)
+        
+        # Subtitle (short version of description for display)
+        subtitle = description[:100].replace('...', '').strip()
+        if len(description) > 100:
+            subtitle += '...'
+        ET.SubElement(item, 'itunes:subtitle').text = subtitle
+        
         if audio_duration:
             ET.SubElement(item, 'itunes:duration').text = audio_duration
         else:
