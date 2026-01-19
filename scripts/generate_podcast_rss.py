@@ -184,7 +184,9 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
     ET.SubElement(channel, 'link').text = config['base_url']
     ET.SubElement(channel, 'description').text = config['description']
     ET.SubElement(channel, 'language').text = config['language']
-    ET.SubElement(channel, 'copyright').text = f"Copyright {datetime.now().year} {config['author']}"
+    # Copyright notice with content license information
+    copyright_text = f"Copyright {datetime.now().year} {config['author']}. Generated content licensed under CC BY-NC 4.0 (see CONTENT_LICENSE.md)"
+    ET.SubElement(channel, 'copyright').text = copyright_text
     ET.SubElement(channel, 'managingEditor').text = f"{config['email']} ({config['author']})"
     ET.SubElement(channel, 'webMaster').text = config['email']
     

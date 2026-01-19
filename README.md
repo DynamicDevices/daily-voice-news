@@ -192,6 +192,19 @@ This service synthesizes original content from multiple news sources:
 
 See [`docs/COPYRIGHT_AND_ETHICS.md`](docs/COPYRIGHT_AND_ETHICS.md) for complete legal framework.
 
+## 📜 License
+
+### Source Code
+The source code is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
+
+### Generated Content
+All generated audio content, transcripts, and news digests are licensed under **Creative Commons Attribution-NonCommercial 4.0 (CC BY-NC 4.0)**.
+
+- ✅ **You can**: Share, adapt, and use for non-commercial purposes
+- ❌ **You cannot**: Use for commercial purposes or sell the content
+
+See [CONTENT_LICENSE.md](CONTENT_LICENSE.md) for full details.
+
 ## 🌍 Adding New Languages
 
 1. Add voice configuration to `config/voice_config.json`
