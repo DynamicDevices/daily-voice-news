@@ -791,9 +791,20 @@ class GitHubAINewsDigest:
             digest += "All content is original analysis designed for accessibility. "
             digest += "For complete coverage, visit news websites directly."
         
-        # Final normalization: replace any multiple spaces with single spaces
-        # This ensures smooth audio flow without unnatural pauses
+        # Final normalization: clean up characters that cause TTS pauses
+        # Replace em dashes (—) with commas for smoother flow (TTS engines pause at em dashes)
+        digest = re.sub(r'—', ', ', digest)
+        # Replace en dashes (–) with commas as well
+        digest = re.sub(r'–', ', ', digest)
+        # Replace any multiple spaces with single spaces (including after punctuation)
         digest = re.sub(r' +', ' ', digest)
+        # Clean up any double commas that might result
+        digest = re.sub(r', ,', ',', digest)
+        digest = re.sub(r',,', ',', digest)
+        # Remove space before comma if it exists (shouldn't happen, but just in case)
+        digest = re.sub(r' ,', ',', digest)
+        # Ensure proper spacing after commas
+        digest = re.sub(r',([^\s])', r', \1', digest)
         
         return digest
     
