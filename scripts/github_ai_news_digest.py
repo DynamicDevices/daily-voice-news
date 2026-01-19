@@ -828,11 +828,11 @@ class GitHubAINewsDigest:
         if self.language == 'bella':
             # Fix common section transition patterns that cause pauses
             # Pattern: "...word. Turning to..." -> "...word; turning to..."
-            digest = re.sub(r'\.\s+(Turning to|On the|Meanwhile|For banking|For those|From a)', 
+            digest = re.sub(r'\.\s+(Turning to|On the|Meanwhile|For banking|For those|From a|Looking at|Here\'s|Heres)', 
                           r'; \1', digest, flags=re.IGNORECASE)
             # Also fix: "...word. The..." when it's a continuation -> "...word, the..."
             # But be careful - only do this for certain patterns
-            digest = re.sub(r'\.\s+(The|This|These|When|Understanding|From a banking)', 
+            digest = re.sub(r'\.\s+(The|This|These|When|Understanding|From a banking|For your)', 
                           r', \1', digest, flags=re.IGNORECASE)
         elif self.language == 'en_GB':
             # Fix English section transitions: "In {theme} news..." patterns
