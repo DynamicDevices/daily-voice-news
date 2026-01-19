@@ -64,9 +64,9 @@
       "provider": "Edge TTS"
     },
     "bella": {
-      "name": "en-GB-LibbyNeural",
-      "display_name": "Libby Neural",
-      "language": "English (UK) - Business/Finance",
+      "name": "en-IE-EmilyNeural",
+      "display_name": "Irish Emily Neural",
+      "language": "English (Ireland) - Business/Finance",
       "gender": "Female",
       "provider": "Edge TTS"
     }

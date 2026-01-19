@@ -856,6 +856,7 @@ class GitHubAINewsDigest:
         
         # CRITICAL: Break up overly long sentences (especially for BellaNews)
         # TTS engines pause at sentence boundaries, so long sentences cause slow speech rate
+        # IMPORTANT: Use semicolons or commas instead of periods to avoid pauses
         if self.language == 'bella':
             # Split sentences that are too long (over 40 words)
             sentences = re.split(r'([.!?]+\s+)', digest)
@@ -876,12 +877,14 @@ class GitHubAINewsDigest:
                                 test_words = test_part.split()
                                 if len(test_words) > 30:
                                     if current_part.strip():
-                                        new_sentences.append(current_part.strip() + ".")
+                                        # Use semicolon instead of period to avoid pause
+                                        new_sentences.append(current_part.strip() + ";")
                                     current_part = part + " "
                                 else:
                                     current_part = test_part + " "
                         if current_part.strip():
-                            new_sentences.append(current_part.strip() + ".")
+                            # Use semicolon instead of period to avoid pause
+                            new_sentences.append(current_part.strip() + ";")
                     else:
                         new_sentences.append(sentence)
                 else:
