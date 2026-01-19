@@ -78,6 +78,35 @@ def get_file_size(filepath: str) -> int:
         return 0
 
 
+def get_audio_duration(filepath: str) -> Optional[str]:
+    """Get audio duration in HH:MM:SS or MM:SS format for iTunes RSS"""
+    try:
+        # Try using pydub first (most accurate)
+        from pydub import AudioSegment
+        audio = AudioSegment.from_mp3(filepath)
+        duration_seconds = len(audio) / 1000.0
+    except ImportError:
+        # Fallback: estimate from file size (rough estimate)
+        # MP3 at ~64kbps = ~8KB per second
+        file_size = get_file_size(filepath)
+        duration_seconds = file_size / 8192.0  # Very rough estimate
+    except Exception:
+        return None
+    
+    if duration_seconds <= 0:
+        return None
+    
+    # Format as HH:MM:SS or MM:SS
+    hours = int(duration_seconds // 3600)
+    minutes = int((duration_seconds % 3600) // 60)
+    seconds = int(duration_seconds % 60)
+    
+    if hours > 0:
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    else:
+        return f"{minutes:02d}:{seconds:02d}"
+
+
 def read_transcript(transcript_path: str) -> Dict[str, str]:
     """Read transcript and extract metadata"""
     try:
@@ -237,11 +266,18 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
         enclosure.set('type', 'audio/mpeg')
         enclosure.set('length', str(file_size))
         
+        # Calculate audio duration
+        audio_duration = get_audio_duration(str(audio_file))
+        
         # iTunes episode metadata
         ET.SubElement(item, 'itunes:title').text = title
         ET.SubElement(item, 'itunes:summary').text = description
         ET.SubElement(item, 'itunes:explicit').text = config['explicit']
-        ET.SubElement(item, 'itunes:duration').text = ''  # Could calculate from audio file
+        if audio_duration:
+            ET.SubElement(item, 'itunes:duration').text = audio_duration
+        else:
+            # Empty duration if we can't calculate it
+            ET.SubElement(item, 'itunes:duration')
         
         # Note: Full transcripts are NOT included in RSS feed
         # Only the description/synopsis is included for cleaner podcast listings
