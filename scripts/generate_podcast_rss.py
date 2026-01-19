@@ -16,28 +16,28 @@ from typing import Dict, List, Optional
 PODCAST_CONFIG = {
     'en_GB': {
         'title': 'AudioNews UK - Daily News Digest',
-        'description': 'Daily AI-enhanced news digest for visually impaired users. Professional Irish voice delivers concise summaries of UK news covering politics, economy, health, international affairs, climate, technology, and crime.',
-        'subtitle': 'AI-powered daily UK news podcast for accessibility. Tech for good delivering accessible news summaries.',
+        'description': 'Daily AI-enhanced news digest for blind and partially sighted users. Professional Irish voice delivers concise summaries of UK news covering politics, economy, health, international affairs, climate, technology, and crime.',
+        'subtitle': 'AI-powered daily UK news podcast for blind and partially sighted users. Tech for good delivering accessible news summaries.',
         'author': 'Dynamic Devices',
         'email': 'audionews@dynamicdevices.co.uk',
         'language': 'en-GB',
         'category': 'News',
         'subcategory': 'Daily News',
-        'keywords': ['news', 'ai', 'techforgood', 'accessibility', 'uk news', 'daily news', 'audio news', 'visually impaired', 'assistive technology'],
+        'keywords': ['news', 'ai', 'techforgood', 'accessibility', 'uk news', 'daily news', 'audio news', 'visually impaired', 'blind', 'partially sighted', 'blind and partially sighted', 'assistive technology', 'screen reader', 'accessible news'],
         'explicit': 'no',
         'image_url': 'https://audionews.uk/images/podcast-cover-en-gb.png',
         'base_url': 'https://audionews.uk/en_GB'
     },
     'pl_PL': {
         'title': 'AudioNews Polska - Codzienny Przegląd Wiadomości',
-        'description': 'Codzienny przegląd wiadomości audio generowany przez AI dla użytkowników z wadami wzroku. Profesjonalny polski głos dostarcza zwięzłe podsumowania polskich wiadomości.',
+        'description': 'Codzienny przegląd wiadomości audio generowany przez AI dla osób niewidomych i słabowidzących. Profesjonalny polski głos dostarcza zwięzłe podsumowania polskich wiadomości.',
         'subtitle': 'Codzienne wiadomości z Polski generowane przez AI. Technologia dla dobra - dostępne wiadomości audio.',
         'author': 'Dynamic Devices',
         'email': 'audionews@dynamicdevices.co.uk',
         'language': 'pl-PL',
         'category': 'News',
         'subcategory': 'Daily News',
-        'keywords': ['news', 'ai', 'techforgood', 'accessibility', 'polish news', 'wiadomości', 'dostępność', 'technologia wspomagająca'],
+        'keywords': ['news', 'ai', 'techforgood', 'accessibility', 'polish news', 'wiadomości', 'dostępność', 'niewidomi', 'słabowidzący', 'niewidomi i słabowidzący', 'technologia wspomagająca', 'screen reader', 'dostępne wiadomości'],
         'explicit': 'no',
         'image_url': 'https://audionews.uk/images/podcast-cover-pl-pl.png',
         'base_url': 'https://audionews.uk/pl_PL'
