@@ -1,13 +1,18 @@
 # AudioNews - AI-Powered News Digests for Accessibility
 
-[![CI/CD](https://github.com/DynamicDevices/daily-voice-news/actions/workflows/daily-news-digest.yml/badge.svg)](https://github.com/DynamicDevices/daily-voice-news/actions/workflows/daily-news-digest.yml)
-[![Release](https://img.shields.io/github/v/release/DynamicDevices/daily-voice-news)](https://github.com/DynamicDevices/daily-voice-news/releases/latest)
+[![CI/CD](https://github.com/DynamicDevices/audionews/actions/workflows/daily-news-digest.yml/badge.svg)](https://github.com/DynamicDevices/audionews/actions/workflows/daily-news-digest.yml)
+[![Release](https://img.shields.io/github/v/release/DynamicDevices/audionews)](https://github.com/DynamicDevices/audionews/releases/latest)
 [![Live](https://img.shields.io/badge/Live-AudioNews.uk-success)](https://audionews.uk)
 [![WCAG 2.1 AA](https://img.shields.io/badge/WCAG%202.1-AA-blue)](https://audionews.uk)
 
 **Professional audio news service for visually impaired users • English, Polish & personalized content • Daily updates • Zero cost**
 
 🌐 **[audionews.uk](https://audionews.uk)** • Updated daily at 6 AM UK time
+
+🎙️ **Podcast RSS Feeds**:
+- [English (UK)](https://audionews.uk/en_GB/podcast.rss)
+- [Polish](https://audionews.uk/pl_PL/podcast.rss)
+- [BellaNews](https://audionews.uk/bella/podcast.rss)
 
 ---
 
@@ -23,7 +28,8 @@ Converts news headlines into natural-sounding audio digests using AI analysis an
   - **BellaNews**: Personalized business/finance news for investment banking & VC interests
 - **AI-Enhanced**: Claude 4.5 Sonnet analyzes and synthesizes content from multiple sources with context-aware generation to avoid repetition
 - **Premium Voices**: Natural neural voices via Microsoft Edge TTS
-- **Accessible**: WCAG 2.1 AA compliant, screen reader optimized
+- **Accessible**: WCAG 2.1 AA compliant, screen reader optimized, designed for blind and partially sighted users
+- **Podcast Distribution**: RSS feeds available for Spotify, Apple Podcasts, and other platforms
 - **Automated**: GitHub Actions generates and deploys daily
 - **Copyright Compliant**: Synthesizes original summaries, never copies articles
 - **Cost Optimized**: Only essential languages enabled to minimize API costs
@@ -34,6 +40,7 @@ Converts news headlines into natural-sounding audio digests using AI analysis an
 audio-transcription/
 ├── scripts/              # Python scripts
 │   ├── github_ai_news_digest.py      # Main generator
+│   ├── generate_podcast_rss.py       # Podcast RSS feed generator
 │   ├── update_website.py             # Website updater
 │   ├── update_language_website.py    # Language page updater
 │   ├── create_all_language_pages.py  # Page generator
@@ -44,6 +51,10 @@ audio-transcription/
 │   └── README.md                     # Config documentation
 ├── docs/                 # GitHub Pages website
 │   ├── en_GB/, pl_PL/, bella/       # Active language pages
+│   │   ├── podcast.rss              # RSS feeds for podcast platforms
+│   │   ├── audio/                   # MP3 audio files
+│   │   └── index.html                # Language-specific pages
+│   ├── images/                       # Podcast artwork (1400x1400px)
 │   ├── shared/                       # Shared assets
 │   └── index.html                    # Main entry
 ├── templates/            # HTML templates
@@ -217,19 +228,54 @@ See [CONTENT_LICENSE.md](CONTENT_LICENSE.md) for full details.
 3. Add language config to `scripts/github_ai_news_digest.py`
 4. Run `python scripts/create_all_language_pages.py`
 
+## 🎙️ Podcast Distribution
+
+AudioNews generates RSS 2.0 feeds for each service that can be submitted to podcast platforms:
+
+- **English (UK)**: `https://audionews.uk/en_GB/podcast.rss`
+- **Polish**: `https://audionews.uk/pl_PL/podcast.rss`
+- **BellaNews**: `https://audionews.uk/bella/podcast.rss`
+
+### Features
+
+- ✅ **RSS 2.0 compliant** with iTunes/Apple Podcasts extensions
+- ✅ **Automatic updates** - New episodes added daily
+- ✅ **Full transcripts** included in episode descriptions
+- ✅ **SEO optimized** with keywords for blind and partially sighted users
+- ✅ **Artwork included** - 1400x1400px podcast covers
+
+### Publishing to Platforms
+
+1. **Spotify**: Submit RSS feed at [Spotify for Podcasters](https://podcasters.spotify.com/)
+2. **Apple Podcasts**: Submit at [Apple Podcasts Connect](https://podcastsconnect.apple.com/)
+3. **Other platforms**: Most platforms accept RSS feeds automatically
+
+See [`docs/PODCAST_SETUP.md`](docs/PODCAST_SETUP.md) for detailed publishing instructions.
+
+### Automatic RSS Generation
+
+RSS feeds are automatically regenerated daily when new content is published. Each feed includes:
+- Last 50 episodes (RSS best practice)
+- Episode metadata (titles, descriptions, dates)
+- Audio file URLs
+- Full transcripts in episode descriptions
+- Podcast artwork and branding
+
 ## 📊 Tech Stack
 
 - **AI**: Anthropic Claude 4.5 Sonnet
-- **TTS**: Microsoft Edge TTS (neural voices)
+- **TTS**: Microsoft Edge TTS (neural voices, +10% speed adjustment)
 - **CI/CD**: GitHub Actions
 - **Hosting**: GitHub Pages
 - **Storage**: Git LFS for audio files
 - **PWA**: Service Worker + manifest
+- **Podcasts**: RSS 2.0 feeds with iTunes extensions
 
 ## 📞 Support
 
 - **Live Service**: [audionews.uk](https://audionews.uk)
-- **Issues**: [GitHub Issues](https://github.com/DynamicDevices/daily-voice-news/issues)
+- **Podcast Setup Guide**: [`docs/PODCAST_SETUP.md`](docs/PODCAST_SETUP.md)
+- **Issues**: [GitHub Issues](https://github.com/DynamicDevices/audionews/issues)
 - **Organization**: [Dynamic Devices](https://github.com/DynamicDevices)
 
 ---
