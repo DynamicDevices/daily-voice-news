@@ -143,6 +143,22 @@ def read_transcript(transcript_path: str) -> Dict[str, str]:
         main_content = re.sub(r'^\s*In\s+\w+\s+news[^.]*\.?\s*', '', main_content, flags=re.IGNORECASE | re.MULTILINE)
         main_content = main_content.strip()
         
+        # Extract headline/topic for more interesting episode titles
+        # Get first sentence or first 60 chars as headline
+        headline = ""
+        first_sentence_match = re.search(r'^([^.]{20,80})\.', main_content)
+        if first_sentence_match:
+            headline = first_sentence_match.group(1).strip()
+            # Clean up headline - remove extra spaces, limit length
+            headline = re.sub(r'\s+', ' ', headline)
+            if len(headline) > 60:
+                headline = headline[:57] + '...'
+        else:
+            # Fallback: use first 60 chars
+            headline = main_content[:60].replace('\n', ' ').strip()
+            if len(main_content) > 60:
+                headline = headline.rstrip('.') + '...'
+        
         # Get first 200 chars for description (after removing opening)
         description = main_content[:200].replace('\n', ' ').strip()
         if len(main_content) > 200:
@@ -150,6 +166,7 @@ def read_transcript(transcript_path: str) -> Dict[str, str]:
         
         return {
             'description': description,
+            'headline': headline,
             'generated_time': generated_time,
             'full_content': main_content
         }
@@ -157,6 +174,7 @@ def read_transcript(transcript_path: str) -> Dict[str, str]:
         print(f"   ⚠️ Error reading transcript: {e}")
         return {
             'description': 'Daily news digest',
+            'headline': '',
             'generated_time': None,
             'full_content': ''
         }
@@ -266,10 +284,18 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
         # Create item
         item = ET.SubElement(channel, 'item')
         
-        # Episode title - include language/service identifier for clarity
-        # Format: "Service Name - Date" (e.g., "AudioNews UK - January 19, 2026")
+        # Episode title - make it more interesting with headline
+        # Format: "Service Name - Date: Headline" (e.g., "AudioNews UK - January 19, 2026: Prince Harry Legal Case")
         service_name = config['title'].split(' - ')[0]  # Get service name without subtitle
-        title = f"{service_name} - {episode_date.strftime('%B %d, %Y')}"
+        headline = transcript_data.get('headline', '')
+        
+        if headline:
+            # Use headline to make title more interesting
+            title = f"{service_name} - {episode_date.strftime('%B %d, %Y')}: {headline}"
+        else:
+            # Fallback to simple format
+            title = f"{service_name} - {episode_date.strftime('%B %d, %Y')}"
+        
         ET.SubElement(item, 'title').text = title
         
         # Episode link
