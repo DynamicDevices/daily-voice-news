@@ -22,6 +22,7 @@ PODCAST_CONFIG = {
         'language': 'en-GB',
         'category': 'News',
         'subcategory': 'Daily News',
+        'keywords': ['news', 'ai', 'techforgood', 'accessibility', 'uk news', 'daily news', 'audio news', 'visually impaired', 'assistive technology'],
         'explicit': 'no',
         'image_url': 'https://audionews.uk/images/podcast-cover-en-gb.png',
         'base_url': 'https://audionews.uk/en_GB'
@@ -34,6 +35,7 @@ PODCAST_CONFIG = {
         'language': 'pl-PL',
         'category': 'News',
         'subcategory': 'Daily News',
+        'keywords': ['news', 'ai', 'techforgood', 'accessibility', 'polish news', 'wiadomości', 'dostępność', 'technologia wspomagająca'],
         'explicit': 'no',
         'image_url': 'https://audionews.uk/images/podcast-cover-pl-pl.png',
         'base_url': 'https://audionews.uk/pl_PL'
@@ -46,6 +48,7 @@ PODCAST_CONFIG = {
         'language': 'en-GB',
         'category': 'Business',
         'subcategory': 'Finance',
+        'keywords': ['news', 'ai', 'techforgood', 'business', 'finance', 'investment banking', 'vc', 'career', 'business strategy'],
         'explicit': 'no',
         'image_url': 'https://audionews.uk/images/podcast-cover-bella.png',
         'base_url': 'https://audionews.uk/bella'
@@ -251,8 +254,14 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
     ET.SubElement(itunes_owner, 'itunes:name').text = config['author']
     ET.SubElement(itunes_owner, 'itunes:email').text = config['email']
     
-    # Standard RSS category (for RSS 2.0 compatibility)
+    # Standard RSS categories (for RSS 2.0 compatibility)
+    # Main category
     ET.SubElement(channel, 'category').text = config['category']
+    
+    # Additional category tags for keywords/tags
+    if 'keywords' in config:
+        for keyword in config['keywords']:
+            ET.SubElement(channel, 'category').text = keyword
     
     # iTunes category (for Apple Podcasts and other platforms)
     itunes_category = ET.SubElement(channel, 'itunes:category')
@@ -260,6 +269,11 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
     if 'subcategory' in config:
         itunes_subcategory = ET.SubElement(itunes_category, 'itunes:category')
         itunes_subcategory.set('text', config['subcategory'])
+    
+    # iTunes keywords (comma-separated for Apple Podcasts)
+    if 'keywords' in config:
+        keywords_str = ', '.join(config['keywords'])
+        ET.SubElement(channel, 'itunes:keywords').text = keywords_str
     
     # iTunes image
     itunes_image = ET.SubElement(channel, 'itunes:image')
