@@ -175,12 +175,56 @@ def read_transcript(transcript_path: str) -> Dict[str, str]:
                 if len(main_content_clean) > 60:
                     headline = headline.rstrip('.') + '...'
         
-        # Get first 200 chars for description (after removing opening)
+        # Get first 300 chars for description (after removing opening)
         # Clean up any leading punctuation/spaces first (dots, semicolons, etc.)
         main_content_clean = re.sub(r'^[.;,:\s]+', '', main_content).strip()
-        description = main_content_clean[:200].replace('\n', ' ').strip()
-        if len(main_content_clean) > 200:
-            description += '...'
+        
+        # For better descriptions, try to find the first substantial sentence or paragraph
+        # Skip very short or generic opening phrases
+        description = ""
+        
+        # Try to find first sentence that's at least 30 characters (skip very short phrases)
+        # Split by periods, semicolons, and exclamation marks
+        sentences = re.split(r'[.!?;]\s+', main_content_clean)
+        for sentence in sentences:
+            sentence = sentence.strip()
+            # Skip very short sentences or generic phrases
+            if len(sentence) >= 30 and not re.match(r'^(Here\'?s|This|Daily|Today|Good morning)', sentence, re.IGNORECASE):
+                description = sentence
+                # If it's a good sentence, try to add the next sentence for context
+                idx = sentences.index(sentence)
+                if idx < len(sentences) - 1:
+                    next_sentence = sentences[idx + 1].strip()
+                    if len(next_sentence) >= 20 and not re.match(r'^(This|Daily|Today)', next_sentence, re.IGNORECASE):
+                        description += ". " + next_sentence
+                break
+        
+        # Fallback to first 300 chars if no good sentence found
+        if not description or len(description) < 30:
+            # Try to get first meaningful paragraph (up to 300 chars)
+            description = main_content_clean[:300].replace('\n', ' ').strip()
+            # Remove any remaining generic opening phrases
+            description = re.sub(r'^(Here\'?s|This|Daily|Today)[^.]*\.\s*', '', description, flags=re.IGNORECASE).strip()
+        
+        # Clean up description
+        description = re.sub(r'\s+', ' ', description).strip()
+        # Remove any trailing generic phrases
+        description = re.sub(r'\s+(This digest|Daily news digest|brought to you by)[^.]*\.?$', '', description, flags=re.IGNORECASE)
+        
+        if len(description) > 300:
+            # Truncate at word boundary
+            description = description[:297].rsplit(' ', 1)[0] + '...'
+        elif len(main_content_clean) > len(description) and len(description) < 150:
+            # If we have more content and description is short, add a bit more
+            remaining = main_content_clean[len(description):].strip()
+            if remaining:
+                next_part = remaining[:150].replace('\n', ' ').strip()
+                # Remove generic phrases from next part too
+                next_part = re.sub(r'^(This|Daily|Today)[^.]*\.\s*', '', next_part, flags=re.IGNORECASE).strip()
+                if next_part and len(next_part) >= 20:
+                    description += " " + next_part
+                    if len(description) > 300:
+                        description = description[:297].rsplit(' ', 1)[0] + '...'
         
         return {
             'description': description,
@@ -347,13 +391,47 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
         ET.SubElement(item, 'link').text = f"{config['base_url']}?date={episode_date.strftime('%Y-%m-%d')}"
         
         # Episode description - SEO optimized
-        description = transcript_data.get('description', f"Daily news digest for {episode_date.strftime('%B %d, %Y')}")
+        description = transcript_data.get('description', '')
+        
+        # For BellaNews, create more engaging business/finance-focused descriptions
+        if language == 'bella':
+            # If description is too generic or missing, try to extract better content from full text
+            if not description or len(description) < 50 or 'Daily news digest' in description:
+                full_content = transcript_data.get('full_content', '')
+                if full_content:
+                    # Find first substantial business/finance content
+                    # Look for patterns like "Looking at", "turning to", "on the", "for banking", etc.
+                    business_patterns = [
+                        r'(Looking at|turning to|on the|for banking|for your|investment|venture capital|markets|finance|business strategy)[^.]{30,250}',
+                        r'(Arctic geopolitics|tariffs|trade policy|monetary policy|central bank|economy|corporate)[^.]{30,250}',
+                        r'(geopolitical|strategic|negotiation|banking|financial|investment|VC|M&A)[^.]{30,250}',
+                    ]
+                    for pattern in business_patterns:
+                        match = re.search(pattern, full_content, re.IGNORECASE)
+                        if match:
+                            extracted = match.group(0).strip()
+                            # Clean up and limit length
+                            extracted = re.sub(r'\s+', ' ', extracted).strip()
+                            # Remove any remaining generic phrases
+                            extracted = re.sub(r'^(Looking at|turning to|on the)\s+', '', extracted, flags=re.IGNORECASE).strip()
+                            if len(extracted) > 50:
+                                description = extracted[:250].rsplit(' ', 1)[0] + '...' if len(extracted) > 250 else extracted
+                                break
+                
+                # If still no good description, use a better default for BellaNews
+                if not description or len(description) < 50 or 'Daily news digest' in description:
+                    description = f"Business and finance news analysis covering investment banking, VC finance, markets, and strategic insights for January 20, 2026"
+        
+        # Fallback for other languages
+        if not description:
+            description = f"Daily news digest for {episode_date.strftime('%B %d, %Y')}"
         
         # Ensure description is keyword-rich and engaging
-        # Add date context for better SEO
-        if not description.startswith(episode_date.strftime('%B %d, %Y')):
+        # Add date context for better SEO (but don't duplicate if already there)
+        date_prefix = f"{episode_date.strftime('%B %d, %Y')} news: "
+        if not description.startswith(date_prefix) and not description.startswith(episode_date.strftime('%B %d, %Y')):
             # Prepend date if not already there (helps with search)
-            description = f"{episode_date.strftime('%B %d, %Y')} news: {description}"
+            description = f"{date_prefix}{description}"
         
         ET.SubElement(item, 'description').text = description
         
