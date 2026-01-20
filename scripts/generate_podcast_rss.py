@@ -286,13 +286,23 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
         keywords_str = ', '.join(config['keywords'])
         ET.SubElement(channel, 'itunes:keywords').text = keywords_str
     
+    # Add cache-busting parameter to image URL based on file modification time
+    # This forces Spotify and other platforms to refresh cached images
+    image_url_with_cache = config['image_url']
+    image_path = Path('docs/images') / Path(config['image_url']).name
+    if image_path.exists():
+        # Use file modification timestamp as cache buster
+        mtime = int(image_path.stat().st_mtime)
+        separator = '&' if '?' in image_url_with_cache else '?'
+        image_url_with_cache = f"{config['image_url']}{separator}v={mtime}"
+    
     # iTunes image
     itunes_image = ET.SubElement(channel, 'itunes:image')
-    itunes_image.set('href', config['image_url'])
+    itunes_image.set('href', image_url_with_cache)
     
     # Channel image
     image = ET.SubElement(channel, 'image')
-    ET.SubElement(image, 'url').text = config['image_url']
+    ET.SubElement(image, 'url').text = image_url_with_cache
     ET.SubElement(image, 'title').text = config['title']
     ET.SubElement(image, 'link').text = config['base_url']
     
