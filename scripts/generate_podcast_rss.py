@@ -141,6 +141,8 @@ def read_transcript(transcript_path: str) -> Dict[str, str]:
             r'^Dzień dobry[^.]*\.\s*Oto Twój przegląd wiadomości[^.]*przygotowany przez Dynamic Devices\.?\s*',
             r'^Good morning Bella[^.]*\.\s*Heres your[^.]*brought to you by Dynamic Devices\.?\s*',
             r'^Good morning Bella[^.]*\.\s*Here\'?s your[^.]*brought to you by Dynamic Devices\.?\s*',
+            r'^Good morning Bella[^.]*;\s*Heres your[^.]*brought to you by Dynamic Devices[^.]*\.?\s*',
+            r'^Good morning Bella[^.]*;\s*Here\'?s your[^.]*brought to you by Dynamic Devices[^.]*\.?\s*',
         ]
         
         for pattern in opening_patterns:
@@ -389,7 +391,15 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
         
         # Find corresponding transcript
         transcript_file = transcript_dir / audio_file.name.replace('.mp3', '.txt')
-        transcript_data = read_transcript(str(transcript_file)) if transcript_file.exists() else {}
+        if transcript_file.exists():
+            transcript_data = read_transcript(str(transcript_file))
+            # Check if extraction actually worked (not just empty fallback)
+            if not transcript_data.get('description') or transcript_data.get('description') == 'Daily news digest':
+                print(f"   ⚠️ Transcript extraction failed for {transcript_file.name}, using fallback")
+                transcript_data = {}
+        else:
+            print(f"   ⚠️ Transcript file not found: {transcript_file.name}")
+            transcript_data = {}
         
         # Episode URL
         episode_url = f"{config['base_url']}/audio/{audio_file.name}"
