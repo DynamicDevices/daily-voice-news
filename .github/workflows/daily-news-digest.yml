@@ -423,6 +423,9 @@ jobs:
         # This prevents touching the root index.html and other development files
         git add docs/en_GB/ docs/fr_FR/ docs/de_DE/ docs/es_ES/ docs/it_IT/ docs/nl_NL/ docs/pl_PL/ docs/bella/ docs/en_GB_LON/ docs/en_GB_LIV/ || true
         
+        # Explicitly add RSS feeds to ensure they're always committed when updated
+        git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
+        
         # Also add any files that might be in wrong location (for backward compatibility)
         git add news_digest_ai_*.mp3 news_digest_ai_*.txt 2>/dev/null || true
         
@@ -483,6 +486,7 @@ jobs:
                 git pull --rebase origin main || git reset --hard origin/main
                 # Re-add and recommit
                 git add docs/en_GB/ docs/fr_FR/ docs/de_DE/ docs/es_ES/ docs/it_IT/ docs/nl_NL/ docs/pl_PL/ docs/bella/ docs/en_GB_LON/ docs/en_GB_LIV/ || true
+                git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
                 git add news_digest_ai_*.mp3 news_digest_ai_*.txt 2>/dev/null || true
                 git commit -m "🤖 Daily AI news digest & website update $(date +%Y-%m-%d)
 
