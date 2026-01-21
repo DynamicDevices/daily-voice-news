@@ -995,6 +995,11 @@ class GitHubAINewsDigest:
                     # Get TTS rate/speed setting (default to +10% for faster speech)
                     rate = tts_settings.get('rate', '+10%')
                     
+                    # Edge TTS requires "+0%" not "0%" for no speed adjustment
+                    # Convert "0%" to "+0%" if needed
+                    if rate == "0%":
+                        rate = "+0%"
+                    
                     # Edge TTS rate format: "+10%" (faster) or "-10%" (slower)
                     # Valid range: -50% to +100%
                     communicate = edge_tts.Communicate(digest_text, self.voice_name, rate=rate)

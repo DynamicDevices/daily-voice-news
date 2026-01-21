@@ -78,7 +78,7 @@
       "retry_backoff_multiplier": 1.5,
       "force_ipv4": true,
       "ssl_verify": true,
-      "rate": "0%"
+      "rate": "+0%"
     },
     "fallback": {
       "enabled": false,
