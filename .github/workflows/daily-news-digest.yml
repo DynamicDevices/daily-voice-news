@@ -483,17 +483,21 @@ jobs:
           fi
         done
         
-        # Check if RSS feeds need updating by checking their lastBuildDate
+        # RSS feeds are ALWAYS regenerated in the previous step, so they may have changed
+        # even if they already contain today's date (new episode added, content updated, etc.)
+        # We need to check if the RSS file content actually changed, not just the date
         RSS_NEEDS_UPDATE=false
         for LANG in en_GB pl_PL bella; do
           if [ -f "docs/${LANG}/podcast.rss" ]; then
-            # Check if RSS feed contains today's date in lastBuildDate or pubDate
-            if grep -q "<lastBuildDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null || \
-               grep -q "<pubDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null; then
-              echo "✅ ${LANG} RSS feed already updated for today (local check)"
-            else
+            # Check if RSS feed contains today's date - if not, definitely needs update
+            if ! grep -q "<lastBuildDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null && \
+               ! grep -q "<pubDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null; then
               RSS_NEEDS_UPDATE=true
-              echo "📻 ${LANG} RSS feed needs updating for today - was updated locally"
+              echo "📻 ${LANG} RSS feed missing today's date - needs update"
+            else
+              # RSS contains today's date, but it was just regenerated so it might have changed
+              # We'll check if it actually changed after staging (using git diff --staged)
+              echo "✅ ${LANG} RSS feed contains today's date (was regenerated, will check for changes)"
             fi
           else
             RSS_NEEDS_UPDATE=true
@@ -501,13 +505,12 @@ jobs:
           fi
         done
         
-        # CRITICAL: Stage HTML and RSS files BEFORE pulling to preserve updates
-        # HTML files are updated in working directory and must be preserved during rebase
-        if [ "$HTML_NEEDS_UPDATE" = "true" ] || [ "$RSS_NEEDS_UPDATE" = "true" ]; then
-          echo "📝 Staging updated HTML and RSS files before pull to preserve updates..."
-          git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
-          git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
-        fi
+        # CRITICAL: Always stage RSS feeds because they're always regenerated and may have changed
+        # (new episode added, content updated, etc.) even if date is already today
+        # Stage HTML and RSS files BEFORE pulling to preserve updates
+        echo "📝 Staging HTML and RSS files before pull (RSS always regenerated, HTML may be updated)..."
+        git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
+        git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
         
         # Pull latest changes FIRST before staging to avoid conflicts
         echo "🔄 Pulling latest changes to handle concurrent runs..."
@@ -515,11 +518,9 @@ jobs:
           echo "⚠️ Pull failed, resetting and trying again..."
           git reset --hard origin/main || true
           git pull origin main || echo "⚠️ Pull failed, continuing anyway"
-          # Re-stage HTML files after reset if they were updated
-          if [ "$HTML_NEEDS_UPDATE" = "true" ] || [ "$RSS_NEEDS_UPDATE" = "true" ]; then
-            git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
-            git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
-          fi
+          # Re-stage HTML and RSS files after reset (RSS always regenerated, HTML may be updated)
+          git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
+          git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
         }
         
         # Check if today's content already exists in remote (another workflow may have already committed)
@@ -534,29 +535,25 @@ jobs:
           fi
         done
         
-        # Check if RSS feeds need updating by checking their lastBuildDate
-        RSS_NEEDS_UPDATE=false
+        # NOTE: HTML_NEEDS_UPDATE is already set BEFORE the pull (checked on locally updated files).
+        # RSS feeds are always regenerated, so we'll check if they actually changed after staging.
+        # We don't re-check here because git pull might have overwritten files, but we already
+        # staged them before the pull. The staging preserves our local updates through the rebase.
+        
+        # Check if RSS feeds actually changed (they're always regenerated, but might be identical)
+        RSS_ACTUALLY_CHANGED=false
         for LANG in en_GB pl_PL bella; do
-          if [ -f "docs/${LANG}/podcast.rss" ]; then
-            # Check if RSS feed contains today's date in lastBuildDate or pubDate
-            if grep -q "<lastBuildDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null || \
-               grep -q "<pubDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null; then
-              echo "✅ ${LANG} RSS feed already updated for today"
-            else
-              RSS_NEEDS_UPDATE=true
-              echo "📻 ${LANG} RSS feed needs updating for today"
-            fi
-          else
-            RSS_NEEDS_UPDATE=true
-            echo "📻 ${LANG} RSS feed missing - needs creation"
+          if git diff --staged docs/${LANG}/podcast.rss 2>/dev/null | grep -q .; then
+            RSS_ACTUALLY_CHANGED=true
+            echo "📻 ${LANG} RSS feed has changes to commit"
           fi
         done
         
         # Only skip commit if ALL of the following are true:
         # 1. All audio files exist
         # 2. All HTML pages are up to date
-        # 3. All RSS feeds are up to date
-        if [ "$ALL_LANGUAGES_EXIST" = "true" ] && [ "$HTML_NEEDS_UPDATE" = "false" ] && [ "$RSS_NEEDS_UPDATE" = "false" ]; then
+        # 3. RSS feeds didn't actually change (even though they were regenerated)
+        if [ "$ALL_LANGUAGES_EXIST" = "true" ] && [ "$HTML_NEEDS_UPDATE" = "false" ] && [ "$RSS_ACTUALLY_CHANGED" = "false" ]; then
           echo "💰 COST OPTIMIZATION: All content already exists and is up to date"
           echo "📊 Another workflow may have already committed - skipping commit"
           echo "✅ This is expected behavior for concurrent runs"
@@ -564,7 +561,7 @@ jobs:
         fi
         
         if [ "$ALL_LANGUAGES_EXIST" = "true" ]; then
-          if [ "$HTML_NEEDS_UPDATE" = "true" ] || [ "$RSS_NEEDS_UPDATE" = "true" ]; then
+          if [ "$HTML_NEEDS_UPDATE" = "true" ] || [ "$RSS_ACTUALLY_CHANGED" = "true" ]; then
             echo "📝 Audio files exist but HTML/RSS need updating - will commit updates"
           fi
         fi
