@@ -267,12 +267,32 @@ jobs:
     
     - name: 📊 Analyze generated content
       run: |
+        TODAY=$(date +%Y_%m_%d)
+        echo "🔍 Verifying generated content for ${TODAY}..."
+        
+        # Check all enabled languages
+        for LANG in en_GB pl_PL bella; do
+          AUDIO_FILE="docs/${LANG}/audio/news_digest_ai_${TODAY}.mp3"
+          TEXT_FILE="docs/${LANG}/news_digest_ai_${TODAY}.txt"
+          
+          if [ -f "$AUDIO_FILE" ] && [ -f "$TEXT_FILE" ]; then
+            AUDIO_SIZE=$(stat -c%s "$AUDIO_FILE" 2>/dev/null || echo "0")
+            TEXT_SIZE=$(stat -c%s "$TEXT_FILE" 2>/dev/null || echo "0")
+            echo "✅ ${LANG}: audio=${AUDIO_SIZE} bytes, text=${TEXT_SIZE} bytes"
+          else
+            echo "❌ ${LANG}: Missing files!"
+            [ ! -f "$AUDIO_FILE" ] && echo "   Missing: $AUDIO_FILE"
+            [ ! -f "$TEXT_FILE" ] && echo "   Missing: $TEXT_FILE"
+          fi
+        done
+        
+        # Legacy check for root directory (shouldn't exist but check anyway)
         if [ -f news_digest_ai_*.mp3 ]; then
-          echo "🎧 Audio file generated successfully"
+          echo "⚠️ Audio files found in root directory (should be in language dirs)"
           ls -lh news_digest_ai_*.mp3
         fi
         if [ -f news_digest_ai_*.txt ]; then
-          echo "📄 Text file generated successfully"
+          echo "⚠️ Text files found in root directory (should be in language dirs)"
           wc -w news_digest_ai_*.txt
         fi
     
@@ -281,6 +301,10 @@ jobs:
       run: |
         echo "🌐 Updating language-specific HTML pages with today's content"
         
+        # Ensure Git LFS files are available (critical for newly generated files)
+        echo "🔄 Ensuring Git LFS files are available..."
+        git lfs pull || echo "⚠️ Git LFS pull failed (may continue if files already available)"
+        
         # Update enabled languages (en_GB, pl_PL, bella)
         ALL_LANGUAGES=("en_GB" "pl_PL" "bella")
         
@@ -288,10 +312,43 @@ jobs:
           echo "📝 Updating ${LANG} page..."
           # Check if today's content exists before updating
           TODAY=$(date +%Y_%m_%d)
-          if [ -f "docs/${LANG}/audio/news_digest_ai_${TODAY}.mp3" ] && [ -f "docs/${LANG}/news_digest_ai_${TODAY}.txt" ]; then
-            python3 scripts/update_language_website.py --language ${LANG} || echo "⚠️ ${LANG} page update failed"
+          AUDIO_FILE="docs/${LANG}/audio/news_digest_ai_${TODAY}.mp3"
+          TEXT_FILE="docs/${LANG}/news_digest_ai_${TODAY}.txt"
+          
+          # Verify files exist and are actual files (not LFS pointers)
+          if [ -f "$AUDIO_FILE" ] && [ -f "$TEXT_FILE" ]; then
+            # Check if audio file is a real file (not LFS pointer - should be >1KB for real MP3)
+            AUDIO_SIZE=$(stat -c%s "$AUDIO_FILE" 2>/dev/null || echo "0")
+            if [ "$AUDIO_SIZE" -gt 1000 ]; then
+              echo "✅ Found ${LANG} content: audio=${AUDIO_SIZE} bytes"
+              if python3 scripts/update_language_website.py --language ${LANG}; then
+                echo "✅ ${LANG} page updated successfully"
+              else
+                echo "❌ ${LANG} page update failed - this will cause website to show old content"
+                exit 1
+              fi
+            else
+              echo "⚠️ ${LANG} audio file too small (${AUDIO_SIZE} bytes) - may be LFS pointer, pulling LFS..."
+              git lfs pull --include="docs/${LANG}/audio/news_digest_ai_${TODAY}.mp3" || true
+              # Retry after LFS pull
+              if [ -f "$AUDIO_FILE" ] && [ "$(stat -c%s "$AUDIO_FILE" 2>/dev/null || echo "0")" -gt 1000 ]; then
+                if python3 scripts/update_language_website.py --language ${LANG}; then
+                  echo "✅ ${LANG} page updated successfully after LFS pull"
+                else
+                  echo "❌ ${LANG} page update failed after LFS pull"
+                  exit 1
+                fi
+              else
+                echo "❌ ${LANG} content not available even after LFS pull"
+                exit 1
+              fi
+            fi
           else
-            echo "⚠️ ${LANG} content for today not found - HTML update skipped (content may not have been generated)"
+            echo "❌ ${LANG} content for today not found:"
+            [ ! -f "$AUDIO_FILE" ] && echo "   Missing: $AUDIO_FILE"
+            [ ! -f "$TEXT_FILE" ] && echo "   Missing: $TEXT_FILE"
+            echo "❌ HTML update cannot proceed without content - failing workflow"
+            exit 1
           fi
         done
         
@@ -404,17 +461,69 @@ jobs:
         git config --local user.email "ai-digest@github.com"
         git config --local user.name "AI News Digest Bot"
         
+        # CRITICAL: Check if HTML/RSS need updating BEFORE pulling (to avoid overwriting local updates)
+        # This check must happen on the locally updated files, not after pulling remote
+        TODAY=$(date +%Y_%m_%d)
+        TODAY_FORMATTED=$(date +%Y-%m-%d)
+        TODAY_ALT_FORMAT=$(date +"%B %d, %Y")
+        
+        HTML_NEEDS_UPDATE=false
+        for LANG in en_GB pl_PL bella; do
+          if [ -f "docs/${LANG}/index.html" ]; then
+            # Check if HTML contains today's date in various formats
+            if grep -q "$TODAY_FORMATTED\|$TODAY_ALT_FORMAT" "docs/${LANG}/index.html" 2>/dev/null; then
+              echo "✅ ${LANG} HTML page already contains today's date (local check)"
+            else
+              HTML_NEEDS_UPDATE=true
+              echo "📝 ${LANG} HTML page needs updating for today ($TODAY_FORMATTED) - was updated locally"
+            fi
+          else
+            HTML_NEEDS_UPDATE=true
+            echo "📝 ${LANG} HTML page missing - needs creation"
+          fi
+        done
+        
+        # Check if RSS feeds need updating by checking their lastBuildDate
+        RSS_NEEDS_UPDATE=false
+        for LANG in en_GB pl_PL bella; do
+          if [ -f "docs/${LANG}/podcast.rss" ]; then
+            # Check if RSS feed contains today's date in lastBuildDate or pubDate
+            if grep -q "<lastBuildDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null || \
+               grep -q "<pubDate>.*$(date +%d.*%b.*%Y)" "docs/${LANG}/podcast.rss" 2>/dev/null; then
+              echo "✅ ${LANG} RSS feed already updated for today (local check)"
+            else
+              RSS_NEEDS_UPDATE=true
+              echo "📻 ${LANG} RSS feed needs updating for today - was updated locally"
+            fi
+          else
+            RSS_NEEDS_UPDATE=true
+            echo "📻 ${LANG} RSS feed missing - needs creation"
+          fi
+        done
+        
+        # CRITICAL: Stage HTML and RSS files BEFORE pulling to preserve updates
+        # HTML files are updated in working directory and must be preserved during rebase
+        if [ "$HTML_NEEDS_UPDATE" = "true" ] || [ "$RSS_NEEDS_UPDATE" = "true" ]; then
+          echo "📝 Staging updated HTML and RSS files before pull to preserve updates..."
+          git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
+          git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
+        fi
+        
         # Pull latest changes FIRST before staging to avoid conflicts
         echo "🔄 Pulling latest changes to handle concurrent runs..."
         git pull --rebase origin main || {
           echo "⚠️ Pull failed, resetting and trying again..."
           git reset --hard origin/main || true
           git pull origin main || echo "⚠️ Pull failed, continuing anyway"
+          # Re-stage HTML files after reset if they were updated
+          if [ "$HTML_NEEDS_UPDATE" = "true" ] || [ "$RSS_NEEDS_UPDATE" = "true" ]; then
+            git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
+            git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
+          fi
         }
         
         # Check if today's content already exists in remote (another workflow may have already committed)
         # Only skip if ALL languages already exist (not just some)
-        TODAY=$(date +%Y_%m_%d)
         ALL_LANGUAGES_EXIST=true
         for LANG in en_GB pl_PL bella; do
           if git ls-tree -r origin/main --name-only | grep -q "docs/${LANG}/audio/news_digest_ai_${TODAY}.mp3"; then
@@ -422,26 +531,6 @@ jobs:
           else
             ALL_LANGUAGES_EXIST=false
             echo "📝 Remote missing ${LANG} content for ${TODAY} - will commit"
-          fi
-        done
-        
-        # Even if audio files exist, we still need to check if HTML pages and RSS feeds need updating
-        # Check if HTML pages contain today's date (not just if they changed from HEAD)
-        HTML_NEEDS_UPDATE=false
-        TODAY_FORMATTED=$(date +%Y-%m-%d)
-        TODAY_ALT_FORMAT=$(date +"%B %d, %Y")
-        for LANG in en_GB pl_PL bella; do
-          if [ -f "docs/${LANG}/index.html" ]; then
-            # Check if HTML contains today's date in various formats
-            if grep -q "$TODAY_FORMATTED\|$TODAY_ALT_FORMAT" "docs/${LANG}/index.html" 2>/dev/null; then
-              echo "✅ ${LANG} HTML page already contains today's date"
-            else
-              HTML_NEEDS_UPDATE=true
-              echo "📝 ${LANG} HTML page needs updating for today ($TODAY_FORMATTED)"
-            fi
-          else
-            HTML_NEEDS_UPDATE=true
-            echo "📝 ${LANG} HTML page missing - needs creation"
           fi
         done
         
