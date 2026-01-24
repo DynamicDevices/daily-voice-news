@@ -518,10 +518,35 @@ jobs:
           echo "⚠️ Pull failed, resetting and trying again..."
           git reset --hard origin/main || true
           git pull origin main || echo "⚠️ Pull failed, continuing anyway"
-          # Re-stage HTML and RSS files after reset (RSS always regenerated, HTML may be updated)
-          git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
-          git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
         }
+        
+        # CRITICAL: After pull, we need to re-apply HTML and RSS updates because:
+        # 1. HTML update step ran earlier and updated files locally
+        # 2. RSS generation step ran earlier and regenerated feeds
+        # 3. git pull --rebase may have overwritten those updates with remote versions
+        # 4. We need to re-apply the updates to ensure we commit the latest versions
+        
+        # Always re-apply HTML updates if needed (git pull may have overwritten them)
+        if [ "$HTML_NEEDS_UPDATE" = "true" ]; then
+          echo "🔄 Re-applying HTML updates after pull..."
+          for LANG in en_GB pl_PL bella; do
+            TODAY=$(date +%Y_%m_%d)
+            if [ -f "docs/${LANG}/audio/news_digest_ai_${TODAY}.mp3" ] && [ -f "docs/${LANG}/news_digest_ai_${TODAY}.txt" ]; then
+              python3 scripts/update_language_website.py --language ${LANG} || echo "⚠️ ${LANG} HTML update failed after pull"
+            fi
+          done
+        fi
+        
+        # Always re-generate RSS feeds after pull (they're always regenerated anyway)
+        # This ensures we have the latest RSS with today's episode, even if pull overwrote them
+        echo "🔄 Re-generating RSS feeds after pull to ensure latest episodes..."
+        git lfs pull || echo "⚠️ Git LFS pull failed (may continue if files already available)"
+        python scripts/generate_podcast_rss.py || echo "⚠️ RSS regeneration failed after pull"
+        
+        # Now stage the re-applied HTML and RSS files
+        echo "📝 Staging HTML and RSS files after pull and re-application..."
+        git add docs/en_GB/index.html docs/pl_PL/index.html docs/bella/index.html 2>/dev/null || true
+        git add docs/en_GB/podcast.rss docs/pl_PL/podcast.rss docs/bella/podcast.rss 2>/dev/null || true
         
         # Check if today's content already exists in remote (another workflow may have already committed)
         # Only skip if ALL languages already exist (not just some)
@@ -535,10 +560,8 @@ jobs:
           fi
         done
         
-        # NOTE: HTML_NEEDS_UPDATE is already set BEFORE the pull (checked on locally updated files).
-        # RSS feeds are always regenerated, so we'll check if they actually changed after staging.
-        # We don't re-check here because git pull might have overwritten files, but we already
-        # staged them before the pull. The staging preserves our local updates through the rebase.
+        # NOTE: HTML_NEEDS_UPDATE was set BEFORE the pull, but we've now re-applied HTML updates.
+        # RSS feeds have been re-generated after pull, so we need to check if they actually changed.
         
         # Check if RSS feeds actually changed (they're always regenerated, but might be identical)
         RSS_ACTUALLY_CHANGED=false
@@ -549,11 +572,22 @@ jobs:
           fi
         done
         
+        # Also check if HTML actually changed after re-application
+        HTML_ACTUALLY_CHANGED=false
+        if [ "$HTML_NEEDS_UPDATE" = "true" ]; then
+          for LANG in en_GB pl_PL bella; do
+            if git diff --staged docs/${LANG}/index.html 2>/dev/null | grep -q .; then
+              HTML_ACTUALLY_CHANGED=true
+              echo "🌐 ${LANG} HTML page has changes to commit"
+            fi
+          done
+        fi
+        
         # Only skip commit if ALL of the following are true:
         # 1. All audio files exist
-        # 2. All HTML pages are up to date
+        # 2. HTML pages didn't actually change (even if they were updated)
         # 3. RSS feeds didn't actually change (even though they were regenerated)
-        if [ "$ALL_LANGUAGES_EXIST" = "true" ] && [ "$HTML_NEEDS_UPDATE" = "false" ] && [ "$RSS_ACTUALLY_CHANGED" = "false" ]; then
+        if [ "$ALL_LANGUAGES_EXIST" = "true" ] && [ "$HTML_ACTUALLY_CHANGED" = "false" ] && [ "$RSS_ACTUALLY_CHANGED" = "false" ]; then
           echo "💰 COST OPTIMIZATION: All content already exists and is up to date"
           echo "📊 Another workflow may have already committed - skipping commit"
           echo "✅ This is expected behavior for concurrent runs"
@@ -561,8 +595,8 @@ jobs:
         fi
         
         if [ "$ALL_LANGUAGES_EXIST" = "true" ]; then
-          if [ "$HTML_NEEDS_UPDATE" = "true" ] || [ "$RSS_ACTUALLY_CHANGED" = "true" ]; then
-            echo "📝 Audio files exist but HTML/RSS need updating - will commit updates"
+          if [ "$HTML_ACTUALLY_CHANGED" = "true" ] || [ "$RSS_ACTUALLY_CHANGED" = "true" ]; then
+            echo "📝 Audio files exist but HTML/RSS have changes - will commit updates"
           fi
         fi
         
