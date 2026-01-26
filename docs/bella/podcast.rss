@@ -32,15 +32,30 @@
       <itunes:category text="Finance" />
     </itunes:category>
     <itunes:keywords>news, ai, techforgood, business, finance, investment banking, vc, career, business strategy</itunes:keywords>
-    <itunes:image href="https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769349727" />
+    <itunes:image href="https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769404488" />
     <image>
-      <url>https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769349727</url>
+      <url>https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769404488</url>
       <title>BellaNews - Daily News for Undergraduate Business and Finance</title>
       <link>https://audionews.uk/bella</link>
     </image>
-    <lastBuildDate>Sun, 25 Jan 2026 14:04:05 +0000</lastBuildDate>
-    <pubDate>Sun, 25 Jan 2026 14:04:05 +0000</pubDate>
+    <lastBuildDate>Mon, 26 Jan 2026 05:21:26 +0000</lastBuildDate>
+    <pubDate>Mon, 26 Jan 2026 05:21:26 +0000</pubDate>
     <generator>AudioNews Podcast Generator</generator>
+    <item>
+      <title>BellaNews - January 26, 2026: Recent tensions between executive power and central bank ...</title>
+      <link>https://audionews.uk/bella?date=2026-01-26</link>
+      <description>January 26, 2026 news: Recent tensions between executive power and central bank independence create fascinating game theory scenarios for markets, When political leaders challenge Federal Reserve autonomy, youre essentially watching a high-stakes coordination problem unfold in real time, The mathematical framework...</description>
+      <guid isPermaLink="true">https://audionews.uk/bella/audio/news_digest_ai_2026_01_26.mp3</guid>
+      <pubDate>Mon, 26 Jan 2026 05:18:51 +0000</pubDate>
+      <enclosure url="https://audionews.uk/bella/audio/news_digest_ai_2026_01_26.mp3" type="audio/mpeg" length="1917792" />
+      <itunes:title>BellaNews - January 26, 2026: Recent tensions between executive power and central bank ...</itunes:title>
+      <itunes:summary>January 26, 2026 news: Recent tensions between executive power and central bank independence create fascinating game theory scenarios for markets, When political leaders challenge Federal Reserve autonomy, youre essentially watching a high-stakes coordination problem unfold in real time, The mathematical framework...</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>9</itunes:episode>
+      <itunes:subtitle>January 26, 2026 news: Recent tensions between executive power and central bank independence create...</itunes:subtitle>
+      <itunes:duration>05:19</itunes:duration>
+    </item>
     <item>
       <title>BellaNews - January 25, 2026: Political uncertainty around central bank independence cr...</title>
       <link>https://audionews.uk/bella?date=2026-01-25</link>

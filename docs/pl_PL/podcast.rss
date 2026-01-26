@@ -36,15 +36,30 @@
       <itunes:category text="Daily News" />
     </itunes:category>
     <itunes:keywords>news, ai, techforgood, accessibility, polish news, wiadomości, dostępność, niewidomi, słabowidzący, niewidomi i słabowidzący, technologia wspomagająca, screen reader, dostępne wiadomości</itunes:keywords>
-    <itunes:image href="https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769349727" />
+    <itunes:image href="https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769404488" />
     <image>
-      <url>https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769349727</url>
+      <url>https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769404488</url>
       <title>AudioNews Polska - Codzienny Przegląd Wiadomości</title>
       <link>https://audionews.uk/pl_PL</link>
     </image>
-    <lastBuildDate>Sun, 25 Jan 2026 14:03:58 +0000</lastBuildDate>
-    <pubDate>Sun, 25 Jan 2026 14:03:58 +0000</pubDate>
+    <lastBuildDate>Mon, 26 Jan 2026 05:21:20 +0000</lastBuildDate>
+    <pubDate>Mon, 26 Jan 2026 05:21:20 +0000</pubDate>
     <generator>AudioNews Podcast Generator</generator>
+    <item>
+      <title>AudioNews Polska - January 26, 2026: Marek Balicki analizuje ostrożność obecnego rządu w przep...</title>
+      <link>https://audionews.uk/pl_PL?date=2026-01-26</link>
+      <description>January 26, 2026 news: w wiadomościach polityka dzisiaj Marek Balicki analizuje ostrożność obecnego rządu w przeprowadzaniu reform, wskazując że doświadczenia pokolenia Tuska z czasów AWS, gdy reformy przyczyniły się do upadku tamtej koalicji, skłaniają do bardziej wyważonego działania; w kontekście międzynarodowym...</description>
+      <guid isPermaLink="true">https://audionews.uk/pl_PL/audio/news_digest_ai_2026_01_26.mp3</guid>
+      <pubDate>Mon, 26 Jan 2026 05:17:48 +0000</pubDate>
+      <enclosure url="https://audionews.uk/pl_PL/audio/news_digest_ai_2026_01_26.mp3" type="audio/mpeg" length="1430640" />
+      <itunes:title>AudioNews Polska - January 26, 2026: Marek Balicki analizuje ostrożność obecnego rządu w przep...</itunes:title>
+      <itunes:summary>January 26, 2026 news: w wiadomościach polityka dzisiaj Marek Balicki analizuje ostrożność obecnego rządu w przeprowadzaniu reform, wskazując że doświadczenia pokolenia Tuska z czasów AWS, gdy reformy przyczyniły się do upadku tamtej koalicji, skłaniają do bardziej wyważonego działania; w kontekście międzynarodowym...</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>13</itunes:episode>
+      <itunes:subtitle>January 26, 2026 news: w wiadomościach polityka dzisiaj Marek Balicki analizuje ostrożność obecnego...</itunes:subtitle>
+      <itunes:duration>03:58</itunes:duration>
+    </item>
     <item>
       <title>AudioNews Polska - January 25, 2026: W wiadomościach międzynarodowych dzisiaj konflikt na Ukra...</title>
       <link>https://audionews.uk/pl_PL?date=2026-01-25</link>
