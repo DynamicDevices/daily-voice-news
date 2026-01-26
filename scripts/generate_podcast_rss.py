@@ -409,7 +409,11 @@ def generate_rss_feed(language: str, output_dir: str) -> str:
         
         # Episode title - make it more interesting with headline
         # Format: "Service Name - Date: Headline" (e.g., "AudioNews UK - January 19, 2026: Prince Harry Legal Case")
+        # Extract service name: first try splitting on ' - ' (old format), then remove ' Daily' suffix (new format)
         service_name = config['title'].split(' - ')[0]  # Get service name without subtitle
+        # Remove ' Daily' suffix if present (for new title format like "AudioNews Daily")
+        if service_name.endswith(' Daily'):
+            service_name = service_name[:-6]  # Remove ' Daily' (6 characters)
         headline = transcript_data.get('headline', '')
         
         if headline:
