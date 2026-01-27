@@ -36,15 +36,30 @@
       <itunes:category text="Daily News" />
     </itunes:category>
     <itunes:keywords>news, ai, techforgood, accessibility, polish news, wiadomości, dostępność, niewidomi, słabowidzący, niewidomi i słabowidzący, technologia wspomagająca, screen reader, dostępne wiadomości</itunes:keywords>
-    <itunes:image href="https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769434664" />
+    <itunes:image href="https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769490665" />
     <image>
-      <url>https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769434664</url>
+      <url>https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769490665</url>
       <title>AudioNews Polska Daily</title>
       <link>https://audionews.uk/pl_PL</link>
     </image>
-    <lastBuildDate>Mon, 26 Jan 2026 13:39:33 +0000</lastBuildDate>
-    <pubDate>Mon, 26 Jan 2026 13:39:33 +0000</pubDate>
+    <lastBuildDate>Tue, 27 Jan 2026 05:16:59 +0000</lastBuildDate>
+    <pubDate>Tue, 27 Jan 2026 05:16:59 +0000</pubDate>
     <generator>AudioNews Podcast Generator</generator>
+    <item>
+      <title>AudioNews Polska - January 27, 2026: W wiadomościach międzynarodowych dzisiaj: konflikt na Ukr...</title>
+      <link>https://audionews.uk/pl_PL?date=2026-01-27</link>
+      <description>January 27, 2026 news: W wiadomościach międzynarodowych dzisiaj: konflikt na Ukrainie wchodzi w tysiąc czterysta trzydziesty czwarty dzień trwania; administracja amerykańska nałożyła nowe cła na Koreę Południową w ramach kolejnej rundy protekcjonistycznych działań gospodarczych, podczas gdy na Węgrzech nasila się...</description>
+      <guid isPermaLink="true">https://audionews.uk/pl_PL/audio/news_digest_ai_2026_01_27.mp3</guid>
+      <pubDate>Tue, 27 Jan 2026 05:14:04 +0000</pubDate>
+      <enclosure url="https://audionews.uk/pl_PL/audio/news_digest_ai_2026_01_27.mp3" type="audio/mpeg" length="759024" />
+      <itunes:title>AudioNews Polska - January 27, 2026: W wiadomościach międzynarodowych dzisiaj: konflikt na Ukr...</itunes:title>
+      <itunes:summary>January 27, 2026 news: W wiadomościach międzynarodowych dzisiaj: konflikt na Ukrainie wchodzi w tysiąc czterysta trzydziesty czwarty dzień trwania; administracja amerykańska nałożyła nowe cła na Koreę Południową w ramach kolejnej rundy protekcjonistycznych działań gospodarczych, podczas gdy na Węgrzech nasila się...</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>14</itunes:episode>
+      <itunes:subtitle>January 27, 2026 news: W wiadomościach międzynarodowych dzisiaj: konflikt na Ukrainie wchodzi w tysi...</itunes:subtitle>
+      <itunes:duration>02:06</itunes:duration>
+    </item>
     <item>
       <title>AudioNews Polska - January 26, 2026: Marek Balicki analizuje ostrożność obecnego rządu w przep...</title>
       <link>https://audionews.uk/pl_PL?date=2026-01-26</link>
