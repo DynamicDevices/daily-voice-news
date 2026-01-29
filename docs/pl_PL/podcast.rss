@@ -36,15 +36,30 @@
       <itunes:category text="Daily News" />
     </itunes:category>
     <itunes:keywords>news, ai, techforgood, accessibility, polish news, wiadomości, dostępność, niewidomi, słabowidzący, niewidomi i słabowidzący, technologia wspomagająca, screen reader, dostępne wiadomości</itunes:keywords>
-    <itunes:image href="https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769577083" />
+    <itunes:image href="https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769664088" />
     <image>
-      <url>https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769577083</url>
+      <url>https://audionews.uk/images/podcast-cover-pl-pl-v2.png?v=1769664088</url>
       <title>AudioNews Polska Daily</title>
       <link>https://audionews.uk/pl_PL</link>
     </image>
-    <lastBuildDate>Wed, 28 Jan 2026 05:17:24 +0000</lastBuildDate>
-    <pubDate>Wed, 28 Jan 2026 05:17:24 +0000</pubDate>
+    <lastBuildDate>Thu, 29 Jan 2026 05:28:01 +0000</lastBuildDate>
+    <pubDate>Thu, 29 Jan 2026 05:28:01 +0000</pubDate>
     <generator>AudioNews Podcast Generator</generator>
+    <item>
+      <title>AudioNews Polska - January 29, 2026: W wiadomościach międzynarodowych dzisiaj konflikt na Ukra...</title>
+      <link>https://audionews.uk/pl_PL?date=2026-01-29</link>
+      <description>January 29, 2026 news: W wiadomościach międzynarodowych dzisiaj konflikt na Ukrainie wkracza w tysiąc czterysta trzydziesty szósty dzień walk; w Waszyngtonie doszło do historycznego spotkania gdy po raz pierwszy prezydent Syrii odwiedził Biały Dom, co budzi pytania o cele obu przywódców w kontekście przyszłości regionu;</description>
+      <guid isPermaLink="true">https://audionews.uk/pl_PL/audio/news_digest_ai_2026_01_29.mp3</guid>
+      <pubDate>Thu, 29 Jan 2026 05:24:12 +0000</pubDate>
+      <enclosure url="https://audionews.uk/pl_PL/audio/news_digest_ai_2026_01_29.mp3" type="audio/mpeg" length="580464" />
+      <itunes:title>AudioNews Polska - January 29, 2026: W wiadomościach międzynarodowych dzisiaj konflikt na Ukra...</itunes:title>
+      <itunes:summary>January 29, 2026 news: W wiadomościach międzynarodowych dzisiaj konflikt na Ukrainie wkracza w tysiąc czterysta trzydziesty szósty dzień walk; w Waszyngtonie doszło do historycznego spotkania gdy po raz pierwszy prezydent Syrii odwiedził Biały Dom, co budzi pytania o cele obu przywódców w kontekście przyszłości regionu;</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>16</itunes:episode>
+      <itunes:subtitle>January 29, 2026 news: W wiadomościach międzynarodowych dzisiaj konflikt na Ukrainie wkracza w tysią...</itunes:subtitle>
+      <itunes:duration>01:36</itunes:duration>
+    </item>
     <item>
       <title>AudioNews Polska - January 28, 2026: W wiadomościach międzynarodowych dzisiaj: konflikt na Ukr...</title>
       <link>https://audionews.uk/pl_PL?date=2026-01-28</link>

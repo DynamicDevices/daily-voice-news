@@ -32,15 +32,30 @@
       <itunes:category text="Finance" />
     </itunes:category>
     <itunes:keywords>news, ai, techforgood, business, finance, investment banking, vc, career, business strategy</itunes:keywords>
-    <itunes:image href="https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769577083" />
+    <itunes:image href="https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769664088" />
     <image>
-      <url>https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769577083</url>
+      <url>https://audionews.uk/images/podcast-cover-bella-v2.png?v=1769664088</url>
       <title>BellaNews Daily</title>
       <link>https://audionews.uk/bella</link>
     </image>
-    <lastBuildDate>Wed, 28 Jan 2026 05:17:31 +0000</lastBuildDate>
-    <pubDate>Wed, 28 Jan 2026 05:17:31 +0000</pubDate>
+    <lastBuildDate>Thu, 29 Jan 2026 05:28:10 +0000</lastBuildDate>
+    <pubDate>Thu, 29 Jan 2026 05:28:10 +0000</pubDate>
     <generator>AudioNews Podcast Generator</generator>
+    <item>
+      <title>BellaNews - January 29, 2026: Currency volatility directly impacts how youll price inte...</title>
+      <link>https://audionews.uk/bella?date=2026-01-29</link>
+      <description>January 29, 2026 news: Currency volatility directly impacts how youll price international transactions and hedge foreign exchange risk in your future deals . Additionally, major tech layoffs reveal how companies optimize their cost structures when capital becomes expensive and growth expectations reset .</description>
+      <guid isPermaLink="true">https://audionews.uk/bella/audio/news_digest_ai_2026_01_29.mp3</guid>
+      <pubDate>Thu, 29 Jan 2026 05:25:16 +0000</pubDate>
+      <enclosure url="https://audionews.uk/bella/audio/news_digest_ai_2026_01_29.mp3" type="audio/mpeg" length="2169792" />
+      <itunes:title>BellaNews - January 29, 2026: Currency volatility directly impacts how youll price inte...</itunes:title>
+      <itunes:summary>January 29, 2026 news: Currency volatility directly impacts how youll price international transactions and hedge foreign exchange risk in your future deals . Additionally, major tech layoffs reveal how companies optimize their cost structures when capital becomes expensive and growth expectations reset .</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>12</itunes:episode>
+      <itunes:subtitle>January 29, 2026 news: Currency volatility directly impacts how youll price international transactio...</itunes:subtitle>
+      <itunes:duration>06:01</itunes:duration>
+    </item>
     <item>
       <title>BellaNews - January 28, 2026: Recent tensions between executive authority and central bank</title>
       <link>https://audionews.uk/bella?date=2026-01-28</link>
